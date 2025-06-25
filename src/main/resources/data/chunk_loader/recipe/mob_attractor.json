@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:turtle_scute"
+    },
+    "B": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "minecraft:armadillo_scute"
+    },
+    "D": {
+      "item": "minecraft:feather"
+    },
+    "E": {
+      "item": "minecraft:end_crystal"
+    },
+    "F": {
+      "item": "minecraft:wheat"
+    },
+    "G": {
+      "item": "minecraft:leather"
+    },
+    "H": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "I": {
+      "item": "minecraft:honeycomb"
+    }
+  },
+  "result": {
+    "id": "chunk_loader:mob_attractor",
+    "count": 1
+  }
+}

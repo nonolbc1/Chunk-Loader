@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:blaze_rod"
+    },
+    "B": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "minecraft:shulker_shell"
+    },
+    "D": {
+      "item": "minecraft:breeze_rod"
+    },
+    "E": {
+      "item": "minecraft:end_crystal"
+    },
+    "F": {
+      "item": "minecraft:fire_charge"
+    },
+    "G": {
+      "item": "minecraft:dragon_breath"
+    },
+    "H": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "I": {
+      "item": "minecraft:echo_shard"
+    }
+  },
+  "result": {
+    "id": "chunk_loader:mob_repeller",
+    "count": 1
+  }
+}

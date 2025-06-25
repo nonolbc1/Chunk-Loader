@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "B": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "minecraft:spider_eye"
+    },
+    "D": {
+      "item": "minecraft:magma_cream"
+    },
+    "E": {
+      "item": "minecraft:end_crystal"
+    },
+    "F": {
+      "item": "minecraft:ghast_tear"
+    },
+    "G": {
+      "item": "minecraft:slime_ball"
+    },
+    "H": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "I": {
+      "item": "minecraft:bone"
+    }
+  },
+  "result": {
+    "id": "chunk_loader:mob_provoker",
+    "count": 1
+  }
+}
