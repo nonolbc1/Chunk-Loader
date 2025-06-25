@@ -1,0 +1,8 @@
+{
+  "itemGroup.chunk_loader": "Chunk Loader Mod",
+  "block.chunk_loader.chunk_loader_block": "Chunk Loader",
+  "item.chunk_loader.chunk_loader_block_item": "Chunk Loader",
+  "item.chunk_loader.mob_attractor": "Mob Attractor",
+  "item.chunk_loader.mob_provoker": "Mob Provoker",
+  "item.chunk_loader.mob_repeller": "Mob Repeller"
+}

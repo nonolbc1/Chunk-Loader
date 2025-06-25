@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "chunk_loader:block/chunk_loader_up_down",
+    "side": "chunk_loader:block/chunk_loader_side"
+  }
+}
