@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "chunk_loader:item/mob_provoker"
+  }
+}
