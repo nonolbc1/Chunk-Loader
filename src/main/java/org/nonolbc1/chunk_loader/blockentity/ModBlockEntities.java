@@ -9,6 +9,7 @@ import org.nonolbc1.chunk_loader.ChunkLoader;
 import org.nonolbc1.chunk_loader.block.ModBlocks;
 
 import java.util.List;
+import java.util.Set;
 
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
@@ -17,7 +18,10 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER_BE =
             BLOCK_ENTITIES.register(
                     "chunk_loader_be",
-                    () -> BlockEntityType.Builder.of(ChunkLoaderBlockEntity::new, ModBlocks.CHUNK_LOADER_BLOCK.get()).build(null)
+                    () -> new BlockEntityType<>(
+                            ChunkLoaderBlockEntity::new,
+                            Set.of(ModBlocks.CHUNK_LOADER_BLOCK.get())
+                    )
             );
 
     public static void register(IEventBus eventBus) {

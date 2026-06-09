@@ -198,7 +198,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
 
         if (color != null) {
             float size = 0.8f;
-            DustParticleOptions dust = new DustParticleOptions(color, size);
+            int colorInt = 0xFF000000 | (((int)(color.x() * 255) & 0xFF) << 16) | (((int)(color.y() * 255) & 0xFF) << 8) | ((int)(color.z() * 255) & 0xFF);
+            DustParticleOptions dust = new DustParticleOptions(colorInt, size);
             level.addParticle(dust, x, y, z, 0, 0.01, 0);
         }
     }

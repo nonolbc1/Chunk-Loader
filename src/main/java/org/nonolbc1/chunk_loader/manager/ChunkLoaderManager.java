@@ -132,7 +132,7 @@ public class ChunkLoaderManager {
 
             int minX = chunkPos.getMinBlockX();
             int minZ = chunkPos.getMinBlockZ();
-            AABB chunkBox = new AABB(minX, 0, minZ, minX + 16, level.getMaxBuildHeight(), minZ + 16);
+            AABB chunkBox = new AABB(minX, -64, minZ, minX + 16, level.getMaxY(), minZ + 16);
 
             List<Player> playersInChunk = level.getEntitiesOfClass(Player.class, chunkBox, player -> true);
 

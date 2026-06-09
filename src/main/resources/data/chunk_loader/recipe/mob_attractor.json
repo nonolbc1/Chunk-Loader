@@ -6,33 +6,15 @@
     "GHI"
   ],
   "key": {
-    "A": {
-      "item": "minecraft:turtle_scute"
-    },
-    "B": {
-      "item": "minecraft:quartz"
-    },
-    "C": {
-      "item": "minecraft:armadillo_scute"
-    },
-    "D": {
-      "item": "minecraft:feather"
-    },
-    "E": {
-      "item": "minecraft:end_crystal"
-    },
-    "F": {
-      "item": "minecraft:wheat"
-    },
-    "G": {
-      "item": "minecraft:leather"
-    },
-    "H": {
-      "item": "minecraft:netherite_scrap"
-    },
-    "I": {
-      "item": "minecraft:honeycomb"
-    }
+    "A":"minecraft:turtle_scute",
+    "B":"minecraft:quartz",
+    "C":"minecraft:armadillo_scute",
+    "D":"minecraft:feather",
+    "E":"minecraft:end_crystal",
+    "F":"minecraft:wheat",
+    "G":"minecraft:leather",
+    "H":"minecraft:netherite_scrap",
+    "I":"minecraft:honeycomb"
   },
   "result": {
     "id": "chunk_loader:mob_attractor",

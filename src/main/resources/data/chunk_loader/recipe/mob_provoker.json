@@ -6,33 +6,15 @@
     "GHI"
   ],
   "key": {
-    "A": {
-      "item": "minecraft:rotten_flesh"
-    },
-    "B": {
-      "item": "minecraft:quartz"
-    },
-    "C": {
-      "item": "minecraft:spider_eye"
-    },
-    "D": {
-      "item": "minecraft:magma_cream"
-    },
-    "E": {
-      "item": "minecraft:end_crystal"
-    },
-    "F": {
-      "item": "minecraft:ghast_tear"
-    },
-    "G": {
-      "item": "minecraft:slime_ball"
-    },
-    "H": {
-      "item": "minecraft:netherite_scrap"
-    },
-    "I": {
-      "item": "minecraft:bone"
-    }
+    "A":"minecraft:rotten_flesh",
+    "B":"minecraft:quartz",
+    "C":"minecraft:spider_eye",
+    "D":"minecraft:magma_cream",
+    "E":"minecraft:end_crystal",
+    "F":"minecraft:ghast_tear",
+    "G":"minecraft:slime_ball",
+    "H":"minecraft:netherite_scrap",
+    "I":"minecraft:bone"
   },
   "result": {
     "id": "chunk_loader:mob_provoker",
