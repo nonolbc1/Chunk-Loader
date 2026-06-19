@@ -5,17 +5,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -96,7 +96,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
         super.setRemoved();
         if (level instanceof ServerLevel serverLevel) {
             for (ChunkPos chunkPos : loadedChunks) {
-                ChunkLoaderManager.unloadChunk(serverLevel, chunkPos);
+                ChunkLoaderManager.unloadChunk(serverLevel, chunkPos, this.lastRadius);
             }
             loadedChunks.clear();
             this.lastRadius = -1;
@@ -109,45 +109,22 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Radius", this.lastRadius);
-
-        ListTag chunkList = new ListTag();
-        for (ChunkPos pos : loadedChunks) {
-            CompoundTag chunkTag = new CompoundTag();
-            chunkTag.putInt("x", pos.x);
-            chunkTag.putInt("z", pos.z);
-            chunkList.add(chunkTag);
-        }
-        tag.put("LoadedChunks", chunkList);
         tag.put("Inventory", itemHandler.serializeNBT(registries));
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        this.lastRadius = tag.getInt("Radius");
-
-        this.loadedChunks.clear();
-        ListTag chunkList = tag.getList("LoadedChunks", Tag.TAG_COMPOUND);
-        for (Tag chunkTag : chunkList) {
-            CompoundTag ct = (CompoundTag) chunkTag;
-            int x = ct.getInt("x");
-            int z = ct.getInt("z");
-            this.loadedChunks.add(new ChunkPos(x, z));
-        }
+        this.lastRadius = tag.getInt("Radius").orElse(-1);
 
         if (tag.contains("Inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("Inventory"));
+            tag.getCompound("Inventory").ifPresent(inv -> itemHandler.deserializeNBT(registries, inv));
             this.setChanged();
         }
         this.lastMobUpgradeType = itemHandler.getMobUpgradeType();
         this.lastPotionEffects = itemHandler.getPotionEffects();
 
         this.chunksToReload = true;
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return saveWithoutMetadata(registries);
     }
 
     @Override
@@ -163,11 +140,21 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
             MobUpgradeType mobUpgradeType = be.itemHandler.getMobUpgradeType();
             List<MobEffectInstance> potionEffects = be.itemHandler.getPotionEffects();
 
-            for (ChunkPos chunkPos : be.loadedChunks) {
-                ChunkLoaderManager.loadChunk(serverLevel, chunkPos);
-                ChunkLoaderManager.setChunkMobUpgradeTypes(chunkPos, be.uuid, mobUpgradeType);
-                ChunkLoaderManager.setChunkPotionEffects(chunkPos, be.uuid, potionEffects);
+            ChunkPos centerChunk = new ChunkPos(be.getBlockPos());
+            Set<ChunkPos> newLoadedChunks = new HashSet<>();
+
+            ChunkLoaderManager.loadChunk(serverLevel, centerChunk, be.lastRadius);
+            newLoadedChunks.add(centerChunk);
+
+            for (int dx = -be.lastRadius; dx <= be.lastRadius; dx++) {
+                for (int dz = -be.lastRadius; dz <= be.lastRadius; dz++) {
+                    ChunkPos chunkPos = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
+                    ChunkLoaderManager.setChunkMobUpgradeTypes(chunkPos, be.uuid, mobUpgradeType);
+                    ChunkLoaderManager.setChunkPotionEffects(chunkPos, be.uuid, potionEffects);
+                }
             }
+
+            be.loadedChunks = newLoadedChunks;
             be.chunksToReload = false;
         }
     }
@@ -219,34 +206,35 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
             }
 
             List<MobEffectInstance> potionEffects = this.itemHandler.getPotionEffects();
-            boolean potionEffectsChanged = !this.lastPotionEffects.equals(potionEffects);
-            if (potionEffectsChanged) {
+            if (!this.lastPotionEffects.equals(potionEffects)) {
                 this.removePotionEffects();
                 this.lastPotionEffects = potionEffects;
             }
 
             if (radius < 0) return;
 
+            ChunkPos centerChunk = new ChunkPos(this.getBlockPos());
             Set<ChunkPos> newLoadedChunks = new HashSet<>();
-            BlockPos blockPos = this.getBlockPos();
+
+            ChunkLoaderManager.loadChunk(serverLevel, centerChunk, radius);
+            newLoadedChunks.add(centerChunk);
+
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
-                    ChunkPos chunkPos = new ChunkPos((blockPos.getX() >> 4) + dx, (blockPos.getZ() >> 4) + dz);
-                    ChunkLoaderManager.loadChunk(serverLevel, chunkPos);
+                    ChunkPos chunkPos = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
                     ChunkLoaderManager.setChunkMobUpgradeTypes(chunkPos, this.uuid, mobUpgradeType);
                     ChunkLoaderManager.setChunkPotionEffects(chunkPos, this.uuid, potionEffects);
-                    newLoadedChunks.add(chunkPos);
                 }
             }
+
             this.loadedChunks = newLoadedChunks;
         }
     }
 
     private void unloadChunks(ServerLevel level) {
         for (ChunkPos chunkPos : loadedChunks) {
-            ChunkLoaderManager.unloadChunk(level, chunkPos);
+            ChunkLoaderManager.unloadChunk(level, chunkPos, this.lastRadius);
         }
-
         loadedChunks.clear();
     }
 
@@ -262,7 +250,9 @@ public class ChunkLoaderBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-
+    public int getLastRadius() {
+        return lastRadius;
+    }
 
     public ChunkLoaderItemHandler getItemHandler() {
         return itemHandler;

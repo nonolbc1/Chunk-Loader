@@ -76,21 +76,12 @@ public class ChunkLoaderBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ChunkLoaderBlockEntity chunkLoaderBE && level instanceof ServerLevel serverLevel) {
-                ChunkPos chunkPos = new ChunkPos(pos);
-                ChunkLoaderManager.unloadChunk(serverLevel, chunkPos);
-
-                for (int i = 0; i < chunkLoaderBE.getItemHandler().getSlots(); i++) {
-                    ItemStack stack = chunkLoaderBE.getItemHandler().getStackInSlot(i);
-                    if (!stack.isEmpty()) {
-                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
-                    }
-                }
-            }
-            super.onRemove(state, level, pos, newState, isMoving);
+    protected void affectNeighborsAfterRemoval(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, boolean movedByPiston) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof ChunkLoaderBlockEntity chunkLoaderBE) {
+            ChunkPos chunkPos = new ChunkPos(pos);
+            ChunkLoaderManager.unloadChunk(level, chunkPos, chunkLoaderBE.getLastRadius());
         }
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 }

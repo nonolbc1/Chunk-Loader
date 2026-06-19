@@ -23,6 +23,7 @@ import java.util.Set;
 
 public class ChunkLoaderItemHandler extends ItemStackHandler {
     private boolean isDeserializing = false;
+    private boolean isClearing = false;
     private final Runnable onContentsChangedCallback;
     private Level level;
     private BlockPos pos;
@@ -97,12 +98,12 @@ public class ChunkLoaderItemHandler extends ItemStackHandler {
     protected void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
 
-        if (isDeserializing || level == null || level.isClientSide) return;
+        if (isDeserializing || isClearing || level == null || level.isClientSide) return;
 
         if (slot == 0) {
             int powerLevel = getPowerLevel();
+            isClearing = true;
 
-            // Mob upgrade slot
             if (powerLevel < 1) {
                 ItemStack removed = getStackInSlot(1);
                 if (!removed.isEmpty()) {
@@ -111,7 +112,6 @@ public class ChunkLoaderItemHandler extends ItemStackHandler {
                 }
             }
 
-            // Potion slots
             for (int i = 2; i <= 6; i++) {
                 if (i - 1 > powerLevel) {
                     ItemStack removed = getStackInSlot(i);
@@ -121,6 +121,8 @@ public class ChunkLoaderItemHandler extends ItemStackHandler {
                     }
                 }
             }
+
+            isClearing = false;
         }
 
         if (onContentsChangedCallback != null) {

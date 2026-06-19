@@ -19,7 +19,6 @@ public class MobSpawnControlEvent {
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (!(event.getLevel() instanceof ServerLevel)) return;
-
         Entity entity = event.getEntity();
         if (!(entity instanceof Mob mob)) return;
 

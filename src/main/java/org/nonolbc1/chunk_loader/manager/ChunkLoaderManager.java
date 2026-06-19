@@ -2,7 +2,6 @@ package org.nonolbc1.chunk_loader.manager;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -26,21 +25,21 @@ public class ChunkLoaderManager {
     private static final Map<ChunkPos, Map<UUID, List<MobEffectInstance>>> chunkPotionSources = new HashMap<>();
     private static int tickCounter = 0;
 
-    public static void loadChunk(ServerLevel level, ChunkPos chunkPos) {
+    public static void loadChunk(ServerLevel level, ChunkPos chunkPos, int radius) {
         int count = chunkTicketCounts.getOrDefault(chunkPos, 0);
         if (count == 0) {
-            level.getChunkSource().addRegionTicket(TicketType.START, chunkPos, 1, Unit.INSTANCE);
+            level.getChunkSource().addTicketWithRadius(TicketType.FORCED, chunkPos, radius);
         }
         chunkTicketCounts.put(chunkPos, count + 1);
     }
 
-    public static void unloadChunk(ServerLevel level, ChunkPos chunkPos) {
+    public static void unloadChunk(ServerLevel level, ChunkPos chunkPos, int radius) {
         int count = chunkTicketCounts.getOrDefault(chunkPos, 0);
         if (count <= 1) {
             chunkTicketCounts.remove(chunkPos);
             chunkMobUpgradeTypes.remove(chunkPos);
             chunkPotionEffects.remove(chunkPos);
-            level.getChunkSource().removeRegionTicket(TicketType.START, chunkPos, 1, Unit.INSTANCE);
+            level.getChunkSource().removeTicketWithRadius(TicketType.FORCED, chunkPos, radius);
         } else {
             chunkTicketCounts.put(chunkPos, count - 1);
         }
